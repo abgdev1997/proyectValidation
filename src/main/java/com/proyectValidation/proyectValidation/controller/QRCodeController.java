@@ -10,17 +10,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class QRCodeController {
 
-    private static final String QR_CODE_IMAGE_PATH = "./src/main/resources/QRCode.png";
+    private static final String QR_CODE_IMAGE_PATH = "./src/main/resources/temp/QRCode.png";
+    Integer width = 200;
+    Integer height = 200;
 
-
-    @GetMapping(value = "/generateAndDownloadQRCode/{codeText}/{width}/{height}")
-    public void download(@PathVariable("codeText") String codeText, @PathVariable("width") Integer width, @PathVariable("height") Integer height)
+    @GetMapping(value = "/generateAndDownloadQRCode/{codeText}")
+    public void download(@PathVariable("codeText") String codeText)
             throws Exception {
         QRCodeGenerator.generateQRCodeImage(codeText, width, height, QR_CODE_IMAGE_PATH);
     }
 
     @GetMapping(value = "/generateQRCode/{codeText}/{width}/{height}")
-    public ResponseEntity<byte[]> generateQRCode(@PathVariable("codeText") String codeText, @PathVariable("width") Integer width, @PathVariable("height") Integer height)
+    public ResponseEntity<byte[]> generateQRCode(@PathVariable("codeText") String codeText)
             throws Exception {
         return ResponseEntity.status(HttpStatus.OK).body(QRCodeGenerator.getQRCodeImage(codeText, width, height));
     }
