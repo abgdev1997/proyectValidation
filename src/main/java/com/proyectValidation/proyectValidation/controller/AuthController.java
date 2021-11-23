@@ -87,10 +87,13 @@ public class AuthController {
         Optional<User> userDB;
         //Comprobacion de que el usuario existe en la base de datos
         if(userRepository.existsByUsername(loginUser.getUsername())) {
+            //rescatamos los datos de usuario de la base de datos
             userDB=userRepository.findByUsername(loginUser.getUsername());
+            //Asignamos los atributos que nos interesan para la comprobación
             passwordDB = userDB.get().getPassword();
+            verified=userDB.get().getVerified();
             //Comprobación que las constraseñas coinciden y el usuario esta verificado
-            if(passwordDB.equals(encoder.encode(loginUser.getPassword())) && userDB.get().getVerified()==true) {
+            if(passwordDB.equals(encoder.encode(loginUser.getPassword())) && verified==true) {
                 return ResponseEntity.ok().build();
             }
         }
