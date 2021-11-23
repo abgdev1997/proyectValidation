@@ -17,6 +17,7 @@ public class User {
     private String email;
     private String dni;
     private String dniReverse;
+    private Boolean verified;
 
     public User(String username, String encode, String email) {
     }
@@ -26,6 +27,7 @@ public class User {
         this.userName = userName;
         this.password = password;
         this.email = email;
+        this.verified=false;
     }
 
     public User(Long id, String userName, String password, String email, String dni, String dniReverse) {
@@ -35,6 +37,7 @@ public class User {
         this.email = email;
         this.dni = dni;
         this.dniReverse = dniReverse;
+        this.verified=false;
     }
 
     public Long getId() {
@@ -84,4 +87,8 @@ public class User {
     public void setDniReverse(String dniReverse) {
         this.dniReverse = dniReverse;
     }
+
+    public Boolean getVerified() {return verified;}
+
+    public void setVerified(Boolean verified) {this.verified = verified;}
 }
