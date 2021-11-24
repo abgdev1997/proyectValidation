@@ -4,8 +4,14 @@ import com.proyectValidation.proyectValidation.dto.MessageDto;
 import com.proyectValidation.proyectValidation.dto.RegisterRequest;
 import com.proyectValidation.proyectValidation.models.User;
 import com.proyectValidation.proyectValidation.repository.UserRepository;
-import com.proyectValidation.proyectValidation.security.payload.LoginUser;
+import com.proyectValidation.proyectValidation.dto.LoginUser;
+import com.proyectValidation.proyectValidation.security.jwt.JwtTokenUtil;
+import com.proyectValidation.proyectValidation.security.payload.JwtResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.PreparedStatement;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -22,17 +27,16 @@ import java.util.Optional;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private final AuthenticationManager authManager;
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder encode) {
+    public AuthController(AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder encoder, JwtTokenUtil jwtTokenUtil){
+        this.authManager = authManager;
         this.userRepository = userRepository;
-        this.encoder = encode;
-    }
-
-    @GetMapping("/users")
-    public Iterable<User> findAllUsers(){
-        return userRepository.findAll();
+        this.encoder = encoder;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @PostMapping("/access")
@@ -81,8 +85,7 @@ public class AuthController {
      * @return Response Entity OK si el login es correcto y BAD REQUEST si el login es incorrecto
      */
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginUser loginUser) {
-        String passwordDB;
+    public ResponseEntity<JwtResponse> login(@RequestBody LoginUser loginUser) {
         boolean verified;
         Optional<User> userDB;
         //Comprobacion de que el usuario existe en la base de datos
@@ -90,11 +93,14 @@ public class AuthController {
             //rescatamos los datos de usuario de la base de datos
             userDB=userRepository.findByUsername(loginUser.getUsername());
             //Asignamos los atributos que nos interesan para la comprobación
-            passwordDB = userDB.get().getPassword();
-            verified=userDB.get().getVerified();
-            //Comprobación que las constraseñas coinciden y el usuario esta verificado
-            if(passwordDB.equals(encoder.encode(loginUser.getPassword())) && verified==true) {
-                return ResponseEntity.ok().build();
+            if(userDB.get().getVerified()){
+                Authentication authentication = authManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(userDB.get().getUserName(), userDB.get().getPassword()));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                String jwt = jwtTokenUtil.generateJwtToken(authentication);
+
+                return ResponseEntity.ok(new JwtResponse(jwt));
             }
         }
         return ResponseEntity.badRequest().build();
