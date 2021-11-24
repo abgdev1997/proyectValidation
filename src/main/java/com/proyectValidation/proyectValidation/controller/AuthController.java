@@ -4,6 +4,7 @@ import com.proyectValidation.proyectValidation.dto.MessageDto;
 import com.proyectValidation.proyectValidation.dto.RegisterRequest;
 import com.proyectValidation.proyectValidation.models.User;
 import com.proyectValidation.proyectValidation.repository.UserRepository;
+import com.proyectValidation.proyectValidation.security.payload.LoginUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.PreparedStatement;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -70,5 +72,31 @@ public class AuthController {
 
         return ResponseEntity.ok(new MessageDto("User registered successfully"));
 
+    }
+
+    /**
+     * Metodo de login de usuario que comprueba que el usuario existe en la base de datos
+     * que la contraseña introducida es la correcta y que el usuario esta validado en el sistema
+     * @param loginUser Usuario y contrañeña pasado en el body para su comprobación
+     * @return Response Entity OK si el login es correcto y BAD REQUEST si el login es incorrecto
+     */
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody LoginUser loginUser) {
+        String passwordDB;
+        boolean verified;
+        Optional<User> userDB;
+        //Comprobacion de que el usuario existe en la base de datos
+        if(userRepository.existsByUsername(loginUser.getUsername())) {
+            //rescatamos los datos de usuario de la base de datos
+            userDB=userRepository.findByUsername(loginUser.getUsername());
+            //Asignamos los atributos que nos interesan para la comprobación
+            passwordDB = userDB.get().getPassword();
+            verified=userDB.get().getVerified();
+            //Comprobación que las constraseñas coinciden y el usuario esta verificado
+            if(passwordDB.equals(encoder.encode(loginUser.getPassword())) && verified==true) {
+                return ResponseEntity.ok().build();
+            }
+        }
+        return ResponseEntity.badRequest().build();
     }
 }
