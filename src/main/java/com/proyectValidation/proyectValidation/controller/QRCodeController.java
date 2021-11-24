@@ -1,55 +1,28 @@
 package com.proyectValidation.proyectValidation.controller;
 
-import com.proyectValidation.proyectValidation.service.QRCodeUtil;
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.proyectValidation.proyectValidation.service.QRCodeGenerator;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-
+@RestController
 public class QRCodeController {
 
-    /**
-     * Generar código QR ordinario según url
-     */
-    @RequestMapping(value = "/createCommonQRCode")
-    public void createCommonQRCode(HttpServletResponse response, String url) throws Exception {
-        ServletOutputStream stream = null;
-        try {
-            stream = response.getOutputStream();
-            // Usa herramientas para generar código QR
-            QRCodeUtil.encode(url, stream);
-        } catch (Exception e) {
-            e.getStackTrace();
-        } finally {
-            if (stream != null) {
-                stream.flush();
-                stream.close();
-            }
-        }
+    private static final String QR_CODE_IMAGE_PATH = "./src/main/resources/temp/QRCode.png";
+    Integer width = 200;
+    Integer height = 200;
+
+    @GetMapping(value = "/generateAndDownloadQRCode/{codeText}")
+    public void download(@PathVariable("codeText") String codeText)
+            throws Exception {
+        QRCodeGenerator.generateQRCodeImage(codeText, width, height, QR_CODE_IMAGE_PATH);
     }
 
-    /**
-     * Generar código QR con logo según url
-     */
-    @RequestMapping(value = "/createLogoQRCode")
-    public void createLogoQRCode(HttpServletResponse response, String url) throws Exception {
-        ServletOutputStream stream = null;
-        try {
-            stream = response.getOutputStream();
-            String logoPath = Thread.currentThread().getContextClassLoader().getResource("").getPath()
-                    + "templates" + File.separator + "logo.jpg";
-            // Usa herramientas para generar código QR
-            QRCodeUtil.encode(url, logoPath, stream, true);
-        } catch (Exception e) {
-            e.getStackTrace();
-        } finally {
-            if (stream != null) {
-                stream.flush();
-                stream.close();
-            }
-        }
+    @GetMapping(value = "/generateQRCode/{codeText}/{width}/{height}")
+    public ResponseEntity<byte[]> generateQRCode(@PathVariable("codeText") String codeText)
+            throws Exception {
+        return ResponseEntity.status(HttpStatus.OK).body(QRCodeGenerator.getQRCodeImage(codeText, width, height));
     }
-
-
 }

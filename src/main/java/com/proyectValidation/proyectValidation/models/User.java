@@ -1,18 +1,48 @@
 package com.proyectValidation.proyectValidation.models;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.awt.*;
+
+@Entity
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String userName;
     private String password;
     private String email;
+    private String dni;
+    private String dniReverse;
 
-    public User() {
+    public User(String username, String encode, String email) {
     }
 
-    public User(String userName, String password, String email) {
+    public User(Long id, String userName, String password, String email) {
+        this.id = id;
         this.userName = userName;
         this.password = password;
         this.email = email;
+    }
+
+    public User(Long id, String userName, String password, String email, String dni, String dniReverse) {
+        this.id = id;
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
+        this.dni = dni;
+        this.dniReverse = dniReverse;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUserName() {
@@ -37,5 +67,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
+
+    public String getDniReverse() {
+        return dniReverse;
+    }
+
+    public void setDniReverse(String dniReverse) {
+        this.dniReverse = dniReverse;
     }
 }
