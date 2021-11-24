@@ -1,4 +1,4 @@
-package com.proyectValidation.proyectValidation.security.payload;
+package com.proyectValidation.proyectValidation.dto;
 
 /**
  * Clase que define el login de usuario para acceder al sistema
