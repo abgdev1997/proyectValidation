@@ -20,7 +20,7 @@ public class QRCodeController {
         QRCodeGenerator.generateQRCodeImage(codeText, width, height, QR_CODE_IMAGE_PATH);
     }
 
-    @GetMapping(value = "/generateQRCode/{codeText}/{width}/{height}")
+    @GetMapping(value = "/generateQRCode/{codeText}/wh")
     public ResponseEntity<byte[]> generateQRCode(@PathVariable("codeText") String codeText)
             throws Exception {
         return ResponseEntity.status(HttpStatus.OK).body(QRCodeGenerator.getQRCodeImage(codeText, width, height));
