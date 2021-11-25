@@ -42,7 +42,7 @@ public class AuthController {
     @PostMapping("/access")
     public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest, @RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse){
 
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (userRepository.existsByUserName(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageDto("ERROR: The username exists"));
@@ -89,9 +89,9 @@ public class AuthController {
         boolean verified;
         Optional<User> userDB;
         //Comprobacion de que el usuario existe en la base de datos
-        if(userRepository.existsByUsername(loginUser.getUsername())) {
+        if(userRepository.existsByUserName(loginUser.getUsername())) {
             //rescatamos los datos de usuario de la base de datos
-            userDB=userRepository.findByUsername(loginUser.getUsername());
+            userDB=userRepository.findByUserName(loginUser.getUsername());
             //Asignamos los atributos que nos interesan para la comprobación
             if(userDB.get().getVerified()){
                 Authentication authentication = authManager.authenticate(

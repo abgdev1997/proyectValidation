@@ -1,16 +1,15 @@
 package com.proyectValidation.proyectValidation.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.*;
 import java.awt.*;
 
 @Entity
+@Table(name = "app_users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String userName;
     private String password;
@@ -19,7 +18,7 @@ public class User {
     private String dniReverse;
     private Boolean verified;
 
-    public User(String username, String encode, String email) {
+    public User(String userName, String encode, String email) {
     }
 
     public User(Long id, String userName, String password, String email) {

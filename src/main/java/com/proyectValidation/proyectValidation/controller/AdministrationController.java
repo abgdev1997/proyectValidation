@@ -29,8 +29,8 @@ public class AdministrationController {
 
     @PutMapping("/verified/{userName}")
     public ResponseEntity<User> verified(@PathParam("userName") String userName){
-        if(userRepository.existsByUsername(userName)){
-            Optional<User> userDB = userRepository.findByUsername(userName);
+        if(userRepository.existsByUserName(userName)){
+            Optional<User> userDB = userRepository.findByUserName(userName);
             userDB.get().setVerified(true);
             return ResponseEntity.ok(userRepository.save(userDB.get()));
         }
