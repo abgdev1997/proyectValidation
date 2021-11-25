@@ -7,6 +7,7 @@ import com.proyectValidation.proyectValidation.repository.UserRepository;
 import com.proyectValidation.proyectValidation.dto.LoginUser;
 import com.proyectValidation.proyectValidation.security.jwt.JwtTokenUtil;
 import com.proyectValidation.proyectValidation.security.payload.JwtResponse;
+import com.proyectValidation.proyectValidation.service.DniService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,15 +32,17 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final JwtTokenUtil jwtTokenUtil;
+    private final DniService dniService;
 
-    public AuthController(AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder encoder, JwtTokenUtil jwtTokenUtil){
+    public AuthController(AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder encoder, JwtTokenUtil jwtTokenUtil, DniService dniService) {
         this.authManager = authManager;
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.dniService = dniService;
     }
 
-    @PostMapping("/access")
+    @PostMapping("/register")
     public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest, @RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse){
 
         if (userRepository.existsByUserName(signUpRequest.getUsername())) {
@@ -57,20 +60,9 @@ public class AuthController {
 
         User user = new User(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()), signUpRequest.getEmail());
 
-        if(!dni.isEmpty()){
+        dniService.dniSave(user, dni);
 
-            Path imageDirectory = Paths.get("src//main//resources//static/images");
-            String absolutePath = imageDirectory.toFile().getAbsolutePath();
-
-            try {
-                byte[] bytesDni = dni.getBytes();
-                Path completedPath = Paths.get(absolutePath + "//" + dni.getOriginalFilename());
-                Files.write(completedPath, bytesDni);
-                user.setDni(dni.getOriginalFilename());
-            }catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        dniService.dniReverseSave(user, dniReverse);
 
         userRepository.save(user);
 
