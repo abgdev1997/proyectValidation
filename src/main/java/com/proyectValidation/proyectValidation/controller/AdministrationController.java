@@ -5,6 +5,7 @@ import com.proyectValidation.proyectValidation.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ public class AdministrationController {
     }
 
     @PutMapping("/verified/{userName}")
-    public ResponseEntity<User> verified(@PathVariable String userName){
+    public ResponseEntity<User> verified(@PathParam("userName") String userName){
         if(userRepository.existsByUsername(userName)){
             Optional<User> userDB = userRepository.findByUsername(userName);
             userDB.get().setVerified(true);
