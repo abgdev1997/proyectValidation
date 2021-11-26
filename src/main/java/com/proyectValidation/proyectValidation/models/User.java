@@ -1,6 +1,8 @@
 package com.proyectValidation.proyectValidation.models;
 
 
+import com.proyectValidation.proyectValidation.dto.RolDto;
+
 import javax.persistence.*;
 import java.awt.*;
 
@@ -17,8 +19,10 @@ public class User {
     private String dni;
     private String dniReverse;
     private Boolean verified;
+    private RolDto rol;
 
     public User(String userName, String encode, String email) {
+        this.rol=RolDto.USER;
     }
 
     public User(Long id, String userName, String password, String email) {
@@ -27,6 +31,7 @@ public class User {
         this.password = password;
         this.email = email;
         this.verified=false;
+        this.rol=RolDto.USER;
     }
 
     public User(Long id, String userName, String password, String email, String dni, String dniReverse) {
@@ -37,6 +42,7 @@ public class User {
         this.dni = dni;
         this.dniReverse = dniReverse;
         this.verified=false;
+        this.rol=RolDto.USER;
     }
 
     public Long getId() {
@@ -87,7 +93,11 @@ public class User {
         this.dniReverse = dniReverse;
     }
 
-    public Boolean getVerified() {return verified;}
+    public Boolean getVerified() { return verified; }
 
-    public void setVerified(Boolean verified) {this.verified = verified;}
+    public void setVerified(Boolean verified) { this.verified = verified; }
+
+    public RolDto getRol() { return rol; }
+
+    public void setRol(RolDto rol) { this.rol = rol; }
 }
