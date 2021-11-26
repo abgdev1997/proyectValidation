@@ -2,6 +2,7 @@ package com.proyectValidation.proyectValidation.controller;
 
 import com.proyectValidation.proyectValidation.dto.MessageDto;
 import com.proyectValidation.proyectValidation.dto.RegisterRequest;
+import com.proyectValidation.proyectValidation.dto.RolDto;
 import com.proyectValidation.proyectValidation.models.User;
 import com.proyectValidation.proyectValidation.repository.UserRepository;
 import com.proyectValidation.proyectValidation.dto.LoginUser;
@@ -91,7 +92,7 @@ public class AuthController {
             //rescatamos los datos de usuario de la base de datos
             userDB = userRepository.findByUserName(loginUser.getUsername());
 
-            if (Objects.equals(userDB.get().getUserName(), "admin")) {
+            if (userDB.get().getRol().equals(RolDto.ADMIN) && Objects.equals(userDB.get().getUserName(), "admin")) {
                 String jwt = authenticationService.authenticate(userDB);
                 return ResponseEntity.ok(new JwtResponse(jwt));
             }
