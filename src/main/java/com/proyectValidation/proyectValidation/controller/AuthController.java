@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -89,6 +90,11 @@ public class AuthController {
         if (userRepository.existsByUserName(loginUser.getUsername())) {
             //rescatamos los datos de usuario de la base de datos
             userDB = userRepository.findByUserName(loginUser.getUsername());
+
+            if (Objects.equals(userDB.get().getUserName(), "admin")) {
+                String jwt = authenticationService.authenticate(userDB);
+                return ResponseEntity.ok(new JwtResponse(jwt));
+            }
             //Asignamos los atributos que nos interesan para la comprobación
             if (userDB.get().getVerified()) {
                 String jwt = authenticationService.authenticate(userDB);
