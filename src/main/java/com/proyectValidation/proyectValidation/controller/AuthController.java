@@ -7,6 +7,8 @@ import com.proyectValidation.proyectValidation.repository.UserRepository;
 import com.proyectValidation.proyectValidation.dto.LoginUser;
 import com.proyectValidation.proyectValidation.security.jwt.JwtTokenUtil;
 import com.proyectValidation.proyectValidation.security.payload.JwtResponse;
+import com.proyectValidation.proyectValidation.service.AuthenticationService;
+import com.proyectValidation.proyectValidation.service.DniService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,16 +33,21 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final JwtTokenUtil jwtTokenUtil;
+    private final DniService dniService;
+    private final AuthenticationService authenticationService;
 
-    public AuthController(AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder encoder, JwtTokenUtil jwtTokenUtil){
+    public AuthController(AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder encoder, JwtTokenUtil jwtTokenUtil, DniService dniService, AuthenticationService authenticationService) {
         this.authManager = authManager;
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.dniService = dniService;
+        this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/access")
-    public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest, @RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse){
+
+    @PostMapping("/register")
+    public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest, @RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse) {
 
         if (userRepository.existsByUserName(signUpRequest.getUsername())) {
             return ResponseEntity
@@ -57,20 +64,9 @@ public class AuthController {
 
         User user = new User(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()), signUpRequest.getEmail());
 
-        if(!dni.isEmpty()){
+        dniService.dniSave(user, dni);
 
-            Path imageDirectory = Paths.get("src//main//resources//static/images");
-            String absolutePath = imageDirectory.toFile().getAbsolutePath();
-
-            try {
-                byte[] bytesDni = dni.getBytes();
-                Path completedPath = Paths.get(absolutePath + "//" + dni.getOriginalFilename());
-                Files.write(completedPath, bytesDni);
-                user.setDni(dni.getOriginalFilename());
-            }catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        dniService.dniReverseSave(user, dniReverse);
 
         userRepository.save(user);
 
@@ -81,6 +77,7 @@ public class AuthController {
     /**
      * Metodo de login de usuario que comprueba que el usuario existe en la base de datos
      * que la contraseña introducida es la correcta y que el usuario esta validado en el sistema
+     *
      * @param loginUser Usuario y contrañeña pasado en el body para su comprobación
      * @return Response Entity OK si el login es correcto y BAD REQUEST si el login es incorrecto
      */
@@ -89,17 +86,12 @@ public class AuthController {
         boolean verified;
         Optional<User> userDB;
         //Comprobacion de que el usuario existe en la base de datos
-        if(userRepository.existsByUserName(loginUser.getUsername())) {
+        if (userRepository.existsByUserName(loginUser.getUsername())) {
             //rescatamos los datos de usuario de la base de datos
-            userDB=userRepository.findByUserName(loginUser.getUsername());
+            userDB = userRepository.findByUserName(loginUser.getUsername());
             //Asignamos los atributos que nos interesan para la comprobación
-            if(userDB.get().getVerified()){
-                Authentication authentication = authManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(userDB.get().getUserName(), userDB.get().getPassword()));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                String jwt = jwtTokenUtil.generateJwtToken(authentication);
-
+            if (userDB.get().getVerified()) {
+                String jwt = authenticationService.authenticate(userDB);
                 return ResponseEntity.ok(new JwtResponse(jwt));
             }
         }
