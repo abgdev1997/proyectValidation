@@ -1,17 +1,16 @@
 package com.proyectValidation.proyectValidation.models;
 
-
 import com.proyectValidation.proyectValidation.dto.RolDto;
 
 import javax.persistence.*;
 import java.awt.*;
 
 @Entity
-@Table(name = "app_users")
+@Table(name="app_users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String userName;
     private String password;
@@ -21,7 +20,8 @@ public class User {
     private Boolean verified;
     private RolDto rol;
 
-    public User(String userName, String encode, String email) {
+    public User(String username, String encode, String email) {
+        //Asigna el rol de user
         this.rol=RolDto.USER;
     }
 
@@ -31,6 +31,7 @@ public class User {
         this.password = password;
         this.email = email;
         this.verified=false;
+        //Asigna el rol de user
         this.rol=RolDto.USER;
     }
 
@@ -42,6 +43,7 @@ public class User {
         this.dni = dni;
         this.dniReverse = dniReverse;
         this.verified=false;
+        //Asigna el rol de user
         this.rol=RolDto.USER;
     }
 
