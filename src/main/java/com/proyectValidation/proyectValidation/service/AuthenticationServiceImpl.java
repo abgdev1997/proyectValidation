@@ -10,23 +10,26 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-public class AuthenticationImpl implements AuthenticationService{
+@Service
+public class AuthenticationServiceImpl implements AuthenticationService{
 
     private final AuthenticationManager authManager;
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final JwtTokenUtil jwtTokenUtil;
 
-    public AuthenticationImpl(AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder encoder, JwtTokenUtil jwtTokenUtil) {
+    public AuthenticationServiceImpl(AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder encoder, JwtTokenUtil jwtTokenUtil) {
         this.authManager = authManager;
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
+    @Override
     public String authenticate(Optional<User> user) {
             Authentication authentication = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.get().getUserName(), user.get().getPassword()));

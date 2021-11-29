@@ -1,6 +1,7 @@
 package com.proyectValidation.proyectValidation.service;
 
 import com.proyectValidation.proyectValidation.models.User;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -8,7 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DniImpl implements DniService {
+@Service
+public class DniServiceImpl implements DniService {
 
     @Override
     public void dniSave(User user, MultipartFile dni){
