@@ -1,6 +1,5 @@
 package com.proyectValidation.proyectValidation.controller;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.proyectValidation.proyectValidation.dto.MessageDto;
 import com.proyectValidation.proyectValidation.dto.RegisterRequest;
 import com.proyectValidation.proyectValidation.dto.RolDto;
@@ -14,7 +13,6 @@ import com.proyectValidation.proyectValidation.service.CloudinaryService;
 import com.proyectValidation.proyectValidation.service.DniService;
 import com.proyectValidation.proyectValidation.service.ImageService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,9 +52,8 @@ public class AuthController {
     }
 
 
-    @JsonIgnore
-    @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest, @RequestBody MultipartFile dni, @RequestBody MultipartFile dniReverse) {
+    @PostMapping("/register")
+    public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest, @RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse) {
 
         if (userRepository.existsByUserName(signUpRequest.getUserName())) {
             return ResponseEntity
