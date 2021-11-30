@@ -53,6 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @ResponseBody
     public ResponseEntity<MessageDto> register(@ModelAttribute RegisterRequest signUpRequest) {
 
         if (userRepository.existsByUserName(signUpRequest.getUserName())) {
@@ -77,7 +78,8 @@ public class AuthController {
     }
 
     @PostMapping("/dni")
-    public ResponseEntity<?> dni(@RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse) {
+    @ResponseBody
+    public ResponseEntity<?> dni(@RequestPart("file") MultipartFile dni, @RequestPart("file") MultipartFile dniReverse) {
         /*
         dniService.dniSave(user, dni);
 
