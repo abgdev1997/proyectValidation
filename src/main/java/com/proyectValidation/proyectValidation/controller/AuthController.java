@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
@@ -56,7 +55,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest, @RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse) {
 
-        if (userRepository.existsByUserName(signUpRequest.getUsername())) {
+        if (userRepository.existsByUserName(signUpRequest.getUserName())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageDto("ERROR: The username exists"));
@@ -69,7 +68,7 @@ public class AuthController {
                     .body(new MessageDto("ERROR: The email exists"));
         }
 
-        User user = new User(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()), signUpRequest.getEmail());
+        User user = new User(signUpRequest.getUserName(), encoder.encode(signUpRequest.getPassword()), signUpRequest.getEmail());
         /*
         dniService.dniSave(user, dni);
 
