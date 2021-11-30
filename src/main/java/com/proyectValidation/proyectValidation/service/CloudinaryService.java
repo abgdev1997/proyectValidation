@@ -2,6 +2,7 @@ package com.proyectValidation.proyectValidation.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,10 +18,19 @@ public class CloudinaryService {
 
     private Map<String, String> valuesMap = new HashMap<>();
 
+    @Value("${app.cloudinary.cloudname}")
+    private String cloudname;
+
+    @Value("${app.cloudinary.apikey}")
+    private String apikey;
+
+    @Value("${app.cloudinary.apisecret}")
+    private String apisecret;
+
     public CloudinaryService(){
-        valuesMap.put("cloud_name", "abgdev1997");
-        valuesMap.put("api_key", "994786457829424");
-        valuesMap.put("api_secret", "VR5WH2t2sih5-FsciKK_5cv_2z0");
+        valuesMap.put("cloud_name", cloudname);
+        valuesMap.put("api_key", apikey);
+        valuesMap.put("api_secret", apisecret);
         cloudinary = new Cloudinary(valuesMap);
     }
 
