@@ -53,7 +53,7 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest, @RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse) {
+    public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest, @RequestBody MultipartFile dni, @RequestBody MultipartFile dniReverse) {
 
         if (userRepository.existsByUserName(signUpRequest.getUserName())) {
             return ResponseEntity
