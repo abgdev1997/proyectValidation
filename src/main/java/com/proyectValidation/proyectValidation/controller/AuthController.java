@@ -55,7 +55,7 @@ public class AuthController {
 
 
     @JsonIgnore
-    @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest, @RequestBody MultipartFile dni, @RequestBody MultipartFile dniReverse) {
 
         if (userRepository.existsByUserName(signUpRequest.getUserName())) {
