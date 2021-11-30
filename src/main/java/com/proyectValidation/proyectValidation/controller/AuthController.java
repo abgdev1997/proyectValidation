@@ -12,8 +12,11 @@ import com.proyectValidation.proyectValidation.service.AuthenticationService;
 import com.proyectValidation.proyectValidation.service.CloudinaryService;
 import com.proyectValidation.proyectValidation.service.DniService;
 import com.proyectValidation.proyectValidation.service.ImageService;
+import com.sun.istack.NotNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.springframework.http.MediaType.IMAGE_PNG;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -79,7 +85,7 @@ public class AuthController {
 
     @PostMapping("/dni")
     @ResponseBody
-    public ResponseEntity<?> dni(@RequestPart("file") MultipartFile dni, @RequestPart("file") MultipartFile dniReverse) {
+    public List<String> dni(@RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse) {
         /*
         dniService.dniSave(user, dni);
 
@@ -98,13 +104,13 @@ public class AuthController {
                 urlDniReverse = (String) resultDniReverse.get("url");
                 dniList.add(urlDni);
                 dniList.add(urlDniReverse);
-                return new ResponseEntity(dniList, HttpStatus.OK);
+                return dniList;
             }
 
         } catch (IOException e) {
             System.err.println("Hubo algun problema en la subida de la imagen." + e.getMessage());
         }
-        return new ResponseEntity(new MessageDto("Subida satisfactoria!"), HttpStatus.OK);
+        return null;
     }
 
     /**
