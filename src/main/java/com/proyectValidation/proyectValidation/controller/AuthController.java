@@ -9,20 +9,21 @@ import com.proyectValidation.proyectValidation.dto.LoginUser;
 import com.proyectValidation.proyectValidation.security.jwt.JwtTokenUtil;
 import com.proyectValidation.proyectValidation.security.payload.JwtResponse;
 import com.proyectValidation.proyectValidation.service.AuthenticationService;
+import com.proyectValidation.proyectValidation.service.CloudinaryService;
 import com.proyectValidation.proyectValidation.service.DniService;
+import com.proyectValidation.proyectValidation.service.ImageService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -37,14 +38,18 @@ public class AuthController {
     private final JwtTokenUtil jwtTokenUtil;
     private final DniService dniService;
     private final AuthenticationService authenticationService;
+    private final CloudinaryService cloudinaryService;
+    private final ImageService imageService;
 
-    public AuthController(AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder encoder, JwtTokenUtil jwtTokenUtil, DniService dniService, AuthenticationService authenticationService) {
+    public AuthController(AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder encoder, JwtTokenUtil jwtTokenUtil, DniService dniService, AuthenticationService authenticationService, CloudinaryService cloudinaryService, ImageService imageService) {
         this.authManager = authManager;
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.jwtTokenUtil = jwtTokenUtil;
         this.dniService = dniService;
         this.authenticationService = authenticationService;
+        this.cloudinaryService = cloudinaryService;
+        this.imageService = imageService;
     }
 
 
@@ -65,10 +70,30 @@ public class AuthController {
         }
 
         User user = new User(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()), signUpRequest.getEmail());
-
+        /*
         dniService.dniSave(user, dni);
 
-        dniService.dniReverseSave(user, dniReverse);
+        dniService.dniReverseSave(user, dniReverse);*/
+        //Realizamos la subida de las imagenes a Cloudinary
+        String urlDni;
+        String urlDniReverse;
+        try {
+            BufferedImage biDni = ImageIO.read(dni.getInputStream());
+            BufferedImage biDniReverse = ImageIO.read(dniReverse.getInputStream());
+            if(biDni!=null || biDniReverse!=null) {
+                Map resultDni = cloudinaryService.upload(dni);
+                Map resultDniReverse = cloudinaryService.upload(dniReverse);
+                urlDni = (String) resultDni.get("url");
+                urlDniReverse = (String) resultDniReverse.get("url");
+                user.setDni(urlDni);
+                user.setDniReverse(urlDniReverse);
+            }else{
+                return new ResponseEntity(new MessageDto("No son imagenes"), HttpStatus.BAD_REQUEST);
+            }
+
+        } catch (IOException e) {
+            System.err.println("Hubo algun problema en la subida de la imagen."+e.getMessage());
+        }
 
         userRepository.save(user);
 
