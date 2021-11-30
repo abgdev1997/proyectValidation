@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -52,7 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<MessageDto> register(@ModelAttribute RegisterRequest signUpRequest, @RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse) {
+    public ResponseEntity<MessageDto> register(@ModelAttribute RegisterRequest signUpRequest) {
 
         if (userRepository.existsByUserName(signUpRequest.getUserName())) {
             return ResponseEntity
@@ -68,6 +69,15 @@ public class AuthController {
         }
 
         User user = new User(signUpRequest.getUserName(), encoder.encode(signUpRequest.getPassword()), signUpRequest.getEmail());
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new MessageDto("User registered successfully"));
+
+    }
+
+    @PostMapping("/dni")
+    public ResponseEntity<?> dni(@RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse) {
         /*
         dniService.dniSave(user, dni);
 
@@ -75,28 +85,24 @@ public class AuthController {
         //Realizamos la subida de las imagenes a Cloudinary
         String urlDni;
         String urlDniReverse;
+        List<String> dniList = null;
         try {
             BufferedImage biDni = ImageIO.read(dni.getInputStream());
             BufferedImage biDniReverse = ImageIO.read(dniReverse.getInputStream());
-            if(biDni!=null || biDniReverse!=null) {
+            if (biDni != null || biDniReverse != null) {
                 Map resultDni = cloudinaryService.upload(dni);
                 Map resultDniReverse = cloudinaryService.upload(dniReverse);
                 urlDni = (String) resultDni.get("url");
                 urlDniReverse = (String) resultDniReverse.get("url");
-                user.setDni(urlDni);
-                user.setDniReverse(urlDniReverse);
-            }else{
-                return new ResponseEntity(new MessageDto("No son imagenes"), HttpStatus.BAD_REQUEST);
+                dniList.add(urlDni);
+                dniList.add(urlDniReverse);
+                return new ResponseEntity(dniList, HttpStatus.OK);
             }
 
         } catch (IOException e) {
-            System.err.println("Hubo algun problema en la subida de la imagen."+e.getMessage());
+            System.err.println("Hubo algun problema en la subida de la imagen." + e.getMessage());
         }
-
-        userRepository.save(user);
-
-        return ResponseEntity.ok(new MessageDto("User registered successfully"));
-
+        return new ResponseEntity(new MessageDto("Subida satisfactoria!"), HttpStatus.OK);
     }
 
     /**
