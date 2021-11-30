@@ -12,13 +12,18 @@ import com.proyectValidation.proyectValidation.service.AuthenticationService;
 import com.proyectValidation.proyectValidation.service.CloudinaryService;
 import com.proyectValidation.proyectValidation.service.DniService;
 import com.proyectValidation.proyectValidation.service.ImageService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -70,12 +75,22 @@ public class AuthController {
 
         dniService.dniReverseSave(user, dniReverse);*/
         //Realizamos la subida de las imagenes a Cloudinary
+        String urlDni;
+        String urlDniReverse;
         try {
-            cloudinaryService.upload(dni);
-            cloudinaryService.upload(dniReverse);
-            /*
-            TODO tenemos que asignar la url de la imagen del dni y dni reverse a los atributos dni y dni reverse de usuario para luego guardarlo
-             */
+            BufferedImage biDni = ImageIO.read(dni.getInputStream());
+            BufferedImage biDniReverse = ImageIO.read(dniReverse.getInputStream());
+            if(biDni!=null || biDniReverse!=null) {
+                Map resultDni = cloudinaryService.upload(dni);
+                Map resultDniReverse = cloudinaryService.upload(dniReverse);
+                urlDni = (String) resultDni.get("url");
+                urlDniReverse = (String) resultDniReverse.get("url");
+                user.setDni(urlDni);
+                user.setDniReverse(urlDniReverse);
+            }else{
+                return new ResponseEntity(new MessageDto("No son imagenes"), HttpStatus.BAD_REQUEST);
+            }
+
         } catch (IOException e) {
             System.err.println("Hubo algun problema en la subida de la imagen."+e.getMessage());
         }
