@@ -51,10 +51,8 @@ public class AuthController {
         this.imageService = imageService;
     }
 
-
-    @ModelAttribute
     @PostMapping("/register")
-    public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest, @RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse) {
+    public ResponseEntity<MessageDto> register(@ModelAttribute RegisterRequest signUpRequest, @RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse) {
 
         if (userRepository.existsByUserName(signUpRequest.getUserName())) {
             return ResponseEntity
