@@ -36,9 +36,4 @@ public class AdministrationController {
         }
         return ResponseEntity.notFound().build();
     }
-
-    @DeleteMapping("/users/delete/{id}")
-    public void deleteById(@PathParam("id") Long id) {
-        userRepository.deleteById(id);
-    }
 }

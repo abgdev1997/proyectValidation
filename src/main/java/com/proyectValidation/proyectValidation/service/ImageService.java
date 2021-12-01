@@ -16,8 +16,8 @@ public class ImageService {
     @Autowired
     ImageRepository imageRepository;
 
-    public Optional<Image> getOne(Long id){
-        return imageRepository.findById(id);
+    public Optional<Image> getOne(String imageUrl){
+        return imageRepository.findByImageUrl(imageUrl);
     }
 
     /**
