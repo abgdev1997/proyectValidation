@@ -11,7 +11,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-public class QRCodeGenerator {
+public class QRCodeGeneratorService {
 
     public static void generateQRCodeImage(String text, int width, int height, String filePath)
             throws WriterException, IOException {
