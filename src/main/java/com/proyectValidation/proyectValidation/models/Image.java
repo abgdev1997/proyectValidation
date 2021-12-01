@@ -15,6 +15,9 @@ public class Image {
     private String imageUrl;
     private String imageId;
 
+    public Image() {
+    }
+
     public Image(String original_filename, String url, String public_id) {
     }
 

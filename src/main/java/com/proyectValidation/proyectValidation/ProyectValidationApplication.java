@@ -19,13 +19,14 @@ public class ProyectValidationApplication {
 		//Instancia de UserRepository
 		UserRepository userRepository = context.getBean(UserRepository.class);
 		//Instanciamos un passwordEncoder
-		PasswordEncoder passwordEncoder= new BCryptPasswordEncoder();
+		PasswordEncoder encoder= new BCryptPasswordEncoder();
 
 		//Crea el usuario Administrador
-		User userAdmin = new User(null,
-				"admin",
-				passwordEncoder.encode("1234"),
-				"admin@admin.com");
+		User userAdmin = new User();
+		userAdmin.setId(null);
+		userAdmin.setUserName("admin");
+		userAdmin.setPassword(encoder.encode("1234"));
+		userAdmin.setEmail("admin@admin.com");
 		/*Se da privilegios de administrador y se verifica la cuenta de forma
 		  manual.	*/
 		//TODO hacer el set del rol y ponerlo como administrador

@@ -8,7 +8,7 @@ package com.proyectValidation.proyectValidation.dto;
 public class LoginUser {
     //ATRIBUTOS
 
-    private String username;
+    private String userName;
     private String password;
 
     //CONTRUCTORES
@@ -19,25 +19,27 @@ public class LoginUser {
     public LoginUser() {
     }
 
+
+
     /**
      * Constructor con todos los parametros
-     * @param username nombre de usuario
+     * @param userName nombre de usuario
      * @param password contraseña de usuario
      */
-    public LoginUser(String username, String password) {
-        this.username = username;
+    public LoginUser(String userName, String password) {
+        this.userName = userName;
         this.password = password;
     }
 
     //GETTER Y SETTER
 
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPassword() {

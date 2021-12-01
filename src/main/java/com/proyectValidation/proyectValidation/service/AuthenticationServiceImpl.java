@@ -1,5 +1,6 @@
 package com.proyectValidation.proyectValidation.service;
 
+import com.proyectValidation.proyectValidation.dto.LoginUser;
 import com.proyectValidation.proyectValidation.models.User;
 import com.proyectValidation.proyectValidation.repository.UserRepository;
 import com.proyectValidation.proyectValidation.security.jwt.JwtTokenUtil;
@@ -30,9 +31,9 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     }
 
     @Override
-    public String authenticate(Optional<User> user) {
+    public String authenticate(LoginUser user) {
             Authentication authentication = authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.get().getUserName(), user.get().getPassword()));
+                    new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtTokenUtil.generateJwtToken(authentication);

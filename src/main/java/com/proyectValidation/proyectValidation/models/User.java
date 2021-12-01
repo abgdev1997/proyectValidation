@@ -20,32 +20,9 @@ public class User {
     private Boolean verified;
     private RolDto rol;
 
-    public User(String username, String encode, String email) {
-        //Asigna el rol de user
-        this.rol=RolDto.USER;
+    public User() {
     }
 
-    public User(Long id, String userName, String password, String email) {
-        this.id = id;
-        this.userName = userName;
-        this.password = password;
-        this.email = email;
-        this.verified=false;
-        //Asigna el rol de user
-        this.rol=RolDto.USER;
-    }
-
-    public User(Long id, String userName, String password, String email, String dni, String dniReverse) {
-        this.id = id;
-        this.userName = userName;
-        this.password = password;
-        this.email = email;
-        this.dni = dni;
-        this.dniReverse = dniReverse;
-        this.verified=false;
-        //Asigna el rol de user
-        this.rol=RolDto.USER;
-    }
 
     public Long getId() {
         return id;
