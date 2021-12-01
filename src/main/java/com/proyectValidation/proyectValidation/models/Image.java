@@ -12,8 +12,8 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String imagenUrl;
-    private String imagenId;
+    private String imageUrl;
+    private String imageId;
 
     public Image(String original_filename, String url, String public_id) {
     }
@@ -21,8 +21,8 @@ public class Image {
     public Image(Long id, String name, String imagenUrl, String imagenId) {
         this.id = id;
         this.name = name;
-        this.imagenUrl = imagenUrl;
-        this.imagenId = imagenId;
+        this.imageUrl = imagenUrl;
+        this.imageId = imagenId;
     }
 
     public Long getId() {
@@ -41,19 +41,19 @@ public class Image {
         this.name = name;
     }
 
-    public String getImagenUrl() {
-        return imagenUrl;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImagenUrl(String imagenUrl) {
-        this.imagenUrl = imagenUrl;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public String getImagenId() {
-        return imagenId;
+    public String getImageId() {
+        return imageId;
     }
 
-    public void setImagenId(String imagenId) {
-        this.imagenId = imagenId;
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
     }
 }
