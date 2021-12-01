@@ -1,8 +1,11 @@
 package com.proyectValidation.proyectValidation.security.config;
 
+import com.proyectValidation.proyectValidation.models.User;
+import com.proyectValidation.proyectValidation.repository.UserRepository;
 import com.proyectValidation.proyectValidation.security.jwt.JwtAuthEntryPoint;
 import com.proyectValidation.proyectValidation.security.jwt.JwtRequestFilter;
 import com.proyectValidation.proyectValidation.security.service.UserDetailsServiceImpl;
+import com.proyectValidation.proyectValidation.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private JwtAuthEntryPoint unauthorizedHandler;
@@ -71,6 +77,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        User usuarioAdmin =userRepository.findByUserName("admin").get();
+        auth.inMemoryAuthentication()
+                .withUser(usuarioAdmin.getUserName())
+                .password(passwordEncoder().encode("1234")).roles("ADMIN");
+
     }
 
     @Override
