@@ -81,6 +81,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication()
                 .withUser(usuarioAdmin.getUserName())
                 .password(passwordEncoder().encode("1234")).roles("ADMIN");
+
     }
 
     @Override
