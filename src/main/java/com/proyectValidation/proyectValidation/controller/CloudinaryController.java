@@ -54,10 +54,10 @@ public class CloudinaryController {
     public ResponseEntity<Image> upload(@RequestParam MultipartFile multipartFile) throws IOException {
 
         Map result = cloudinaryService.upload(multipartFile);
-        Image image = new Image(
-                (String)result.get("original_filename"),
-                (String)result.get("url"),
-                (String)result.get("public_id"));
+        Image image = new Image();
+        image.setImageId((String) result.get("public_id"));
+        image.setImageUrl((String) result.get("url"));
+        image.setName((String) result.get("original_filename"));
         imagenService.save(image);
         return ResponseEntity.ok().body(image);
     }
