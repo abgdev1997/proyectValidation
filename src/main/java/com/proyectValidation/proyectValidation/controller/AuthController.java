@@ -11,12 +11,12 @@ import com.proyectValidation.proyectValidation.security.payload.JwtResponse;
 import com.proyectValidation.proyectValidation.service.AuthenticationService;
 import com.proyectValidation.proyectValidation.service.CloudinaryService;
 import com.proyectValidation.proyectValidation.service.ImageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -24,27 +24,28 @@ import java.util.Optional;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthenticationManager authManager;
-    private final UserRepository userRepository;
-    private final PasswordEncoder encoder;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final AuthenticationService authenticationService;
-    private final CloudinaryService cloudinaryService;
-    private final ImageService imageService;
+    @Autowired
+    private AuthenticationManager authManager;
+    @Autowired
+    private UserRepository userRepository;
 
-    public AuthController(AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder encoder, JwtTokenUtil jwtTokenUtil, AuthenticationService authenticationService, CloudinaryService cloudinaryService, ImageService imageService) {
-        this.authManager = authManager;
-        this.userRepository = userRepository;
+    private final PasswordEncoder encoder;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private AuthenticationService authenticationService;
+    @Autowired
+    private CloudinaryService cloudinaryService;
+    @Autowired
+    private ImageService imageService;
+
+    public AuthController(PasswordEncoder encoder) {
         this.encoder = encoder;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.authenticationService = authenticationService;
-        this.cloudinaryService = cloudinaryService;
-        this.imageService = imageService;
     }
 
     @PostMapping("/register")
     @ResponseBody
-    public ResponseEntity<MessageDto> register(@ModelAttribute RegisterRequest signUpRequest) {
+    public ResponseEntity<MessageDto> register(@RequestBody RegisterRequest signUpRequest) {
 
         if (userRepository.existsByUserName(signUpRequest.getUserName())) {
             return ResponseEntity
@@ -59,7 +60,15 @@ public class AuthController {
                     .body(new MessageDto("ERROR: The email exists"));
         }
 
-        User user = new User(signUpRequest.getUserName(), encoder.encode(signUpRequest.getPassword()), signUpRequest.getEmail());
+        User user = new User();
+        user.setId(null);
+        user.setUserName(signUpRequest.getUserName());
+        user.setPassword(encoder.encode(signUpRequest.getPassword()));
+        user.setEmail(signUpRequest.getEmail());
+        user.setDni(signUpRequest.getDni());
+        user.setDniReverse(signUpRequest.getDniReverse());
+        user.setVerified(false);
+        user.setRol(RolDto.USER);
 
         userRepository.save(user);
 
@@ -80,20 +89,19 @@ public class AuthController {
         boolean verified;
         Optional<User> userDB;
         //Comprobacion de que el usuario existe en la base de datos
-        if (userRepository.existsByUserName(loginUser.getUsername())) {
+        if (userRepository.existsByUserName(loginUser.getUserName())) {
             //rescatamos los datos de usuario de la base de datos
-            userDB = userRepository.findByUserName(loginUser.getUsername());
-
-            if (userDB.get().getRol().equals(RolDto.ADMIN) && Objects.equals(userDB.get().getUserName(), "admin")) {
-                String jwt = authenticationService.authenticate(userDB);
-                return ResponseEntity.ok(new JwtResponse(jwt));
-            }
+            userDB = userRepository.findByUserName(loginUser.getUserName());
             //Asignamos los atributos que nos interesan para la comprobación
             if (userDB.get().getVerified()) {
-                String jwt = authenticationService.authenticate(userDB);
+                    if (userDB.get().getRol()== RolDto.ADMIN) {
+                        String jwt = authenticationService.authenticate(loginUser);
+                        return ResponseEntity.ok(new JwtResponse(jwt));
+                    }
+                }
+                String jwt = authenticationService.authenticate(loginUser);
                 return ResponseEntity.ok(new JwtResponse(jwt));
             }
-        }
         return ResponseEntity.badRequest().build();
     }
 }
