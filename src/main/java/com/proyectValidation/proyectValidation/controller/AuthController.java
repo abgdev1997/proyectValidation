@@ -84,7 +84,7 @@ public class AuthController {
     }
 
     @PostMapping("/dni")
-    @ResponseBody
+    @RequestMapping(consumes = { "multipart/form-data" })
     public List<String> dni(@RequestParam("file") MultipartFile dni, @RequestParam("file") MultipartFile dniReverse) {
         /*
         dniService.dniSave(user, dni);
