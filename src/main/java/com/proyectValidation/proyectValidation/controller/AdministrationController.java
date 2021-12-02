@@ -24,7 +24,7 @@ public class AdministrationController {
     private UserDetailsServiceImpl userDetailsService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/unverifiedUsers")
+    @GetMapping("/users/unverifiedUsers")
     public ResponseEntity<List<User>> findAllUnverifiedUsers() {
         List<User> users = userRepository.findAll();
         users.removeIf(User::getVerified);
@@ -39,7 +39,7 @@ public class AdministrationController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/verified/{userName}")
+    @PutMapping("/users/verified/{userName}")
     public ResponseEntity<MessageDto> verified(@PathVariable("userName")String userName) {
         if (userRepository.existsByUserName(userName)) {
             Optional<User> userDB = userRepository.findByUserName(userName);
