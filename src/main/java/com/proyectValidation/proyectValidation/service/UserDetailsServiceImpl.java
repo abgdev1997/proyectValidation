@@ -83,18 +83,23 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public void deleteUser(Long id) throws IOException {
         Optional<User> user = userRepository.findById(id);
 
-        String imageUrlDni = user.get().getDni();
-        String imageUrlDniReverse = user.get().getDniReverse();
+        if (user.isPresent()) {
+            String imageUrlDni = (String) user.get().getDni();
+            String imageUrlDniReverse = (String) user.get().getDniReverse();
 
-        Image image = imageService.getOne(imageUrlDni).get();
-        Image imageReverse = imageService.getOne(imageUrlDniReverse).get();
 
-        Map result = cloudinaryService.delete(image.getImageId());
-        Map resultReverse = cloudinaryService.delete(imageReverse.getImageId());
+            Optional<Image> image = imageService.getOne(imageUrlDni);
+            Optional<Image> imageReverse = imageService.getOne(imageUrlDniReverse);
 
-        imageService.delete(image.getId());
-        imageService.delete(imageReverse.getId());
+            if(image.isPresent() && imageReverse.isPresent()) {
+                cloudinaryService.delete(image.get().getImageId());
+                cloudinaryService.delete(imageReverse.get().getImageId());
 
-        userRepository.deleteById(id);
+                imageService.delete(image.get().getId());
+                imageService.delete(imageReverse.get().getId());
+
+                userRepository.deleteById(id);
+            }
+        }
     }
 }
