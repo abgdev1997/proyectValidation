@@ -1,11 +1,11 @@
 package com.proyectValidation.proyectValidation.security.config;
 
-import com.proyectValidation.proyectValidation.models.User;
 import com.proyectValidation.proyectValidation.repository.UserRepository;
 import com.proyectValidation.proyectValidation.security.jwt.JwtAuthEntryPoint;
 import com.proyectValidation.proyectValidation.security.jwt.JwtRequestFilter;
-import com.proyectValidation.proyectValidation.security.service.UserDetailsServiceImpl;
-import com.proyectValidation.proyectValidation.service.AuthenticationService;
+import com.proyectValidation.proyectValidation.security.payload.CustomAccessDeniedHandler;
+import com.proyectValidation.proyectValidation.security.payload.UnauthorizedEntryPoint;
+import com.proyectValidation.proyectValidation.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,15 +32,24 @@ import java.util.List;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private JwtAuthEntryPoint unauthorizedHandler;
 
+    @Autowired
+    private UnauthorizedEntryPoint unauthorizedEntryPoint;
+
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;
+
     // ================ CREACIÓN DE BEANS ======================
+
+    @Bean
+    public UserDetailsServiceImpl userDetailsService() {
+        return new UserDetailsServiceImpl();
+    }
+
     @Bean
     public JwtRequestFilter authenticationJwtTokenFilter() {
         return new JwtRequestFilter();
@@ -76,12 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // ========================= OVERRIDE: SOBREESCRIBIR FUNCIONALIDAD SECURITY POR DEFECTO ======
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-        User usuarioAdmin =userRepository.findByUserName("admin").get();
-        auth.inMemoryAuthentication()
-                .withUser(usuarioAdmin.getUserName())
-                .password(passwordEncoder().encode("1234")).roles("ADMIN");
-
+        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -95,8 +99,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/QR/**").permitAll()
                 .antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**", "/api/offers/**").permitAll()
                 .antMatchers("/").permitAll()
-                .antMatchers("/api/users", "/api/verified/**").hasRole("ADMIN")
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(unauthorizedEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
