@@ -30,7 +30,7 @@ public class ProyectValidationApplication {
 		/*Se da privilegios de administrador y se verifica la cuenta de forma
 		  manual.	*/
 		//TODO hacer el set del rol y ponerlo como administrador
-		userAdmin.setRol(RolDto.ADMIN);
+		userAdmin.setRole(RolDto.ADMIN);
 		userAdmin.setVerified(true);
 		//Guarda el usuario en la base de datos
 		userRepository.save(userAdmin);

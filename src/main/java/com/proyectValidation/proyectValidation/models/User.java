@@ -3,7 +3,6 @@ package com.proyectValidation.proyectValidation.models;
 import com.proyectValidation.proyectValidation.dto.RolDto;
 
 import javax.persistence.*;
-import java.awt.*;
 
 @Entity
 @Table(name="app_users")
@@ -18,7 +17,7 @@ public class User {
     private String dni;
     private String dniReverse;
     private Boolean verified;
-    private RolDto rol;
+    private RolDto role;
 
     public User() {
     }
@@ -76,7 +75,7 @@ public class User {
 
     public void setVerified(Boolean verified) { this.verified = verified; }
 
-    public RolDto getRol() { return rol; }
+    public RolDto getRole() { return role; }
 
-    public void setRol(RolDto rol) { this.rol = rol; }
+    public void setRole(RolDto role) { this.role = role; }
 }
