@@ -30,9 +30,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         Map<String, Object> data = new HashMap<>();
         data.put("timestamp", new Date());
         data.put("status",HttpStatus.FORBIDDEN.value());
-        data.put("message", "Access Denied, login again!");
+        data.put("message", "Access Denied, you aren't ADMIN");
         data.put("path", request.getRequestURL().toString());
-        data.put("pd", "Have a good day :)");
 
         OutputStream out = response.getOutputStream();
         ObjectMapper mapper = new ObjectMapper();
