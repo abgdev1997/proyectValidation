@@ -40,11 +40,11 @@ public class CloudinaryService {
      * @return Map result
      * @throws IOException
      */
-    public Map upload(MultipartFile multipartFile) throws IOException {
+    public Map<?,?> upload(MultipartFile multipartFile) throws IOException {
         //Convertimos el multipart
         File file = convert(multipartFile);
         //lo subimos a cloudinary
-        Map result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+        Map<?,?> result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
         //Borramos el FileOutputStream
         file.delete();
 
@@ -54,12 +54,10 @@ public class CloudinaryService {
     /**
      * Delete Image
      * @param id
-     * @return Map result
      * @throws IOException
      */
-    public Map delete(String id) throws IOException {
-        Map result = cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());
-        return result;
+    public void delete(String id) throws IOException {
+        cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());
     }
 
     /**

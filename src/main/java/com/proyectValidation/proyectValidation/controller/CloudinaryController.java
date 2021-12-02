@@ -56,7 +56,7 @@ public class CloudinaryController {
     }
 
     private Image uploadOne(MultipartFile multipartFile) throws IOException {
-        Map result = cloudinaryService.upload(multipartFile);
+        Map<?,?> result = cloudinaryService.upload(multipartFile);
         Image image = new Image();
         image.setImageId((String) result.get("public_id"));
         image.setImageUrl((String) result.get("url"));

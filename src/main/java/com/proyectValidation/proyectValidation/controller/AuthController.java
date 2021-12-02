@@ -65,16 +65,18 @@ public class AuthController {
         if (userRepository.existsByUserName(loginUser.getUserName())) {
             //rescatamos los datos de usuario de la base de datos
             userDB = userRepository.findByUserName(loginUser.getUserName());
-            //Asignamos los atributos que nos interesan para la comprobación
-            if (userDB.get().getVerified()) {
-                    if (userDB.get().getRole()== RolDto.ADMIN) {
+            if(userDB.isPresent()) {
+                //Asignamos los atributos que nos interesan para la comprobación
+                if (userDB.get().getVerified()) {
+                    if (userDB.get().getRole() == RolDto.ADMIN) {
                         String jwt = authenticationService.authenticate(loginUser);
                         return ResponseEntity.ok(new JwtResponse(jwt));
                     }
-                String jwt = authenticationService.authenticate(loginUser);
-                return ResponseEntity.ok(new JwtResponse(jwt));
+                    String jwt = authenticationService.authenticate(loginUser);
+                    return ResponseEntity.ok(new JwtResponse(jwt));
                 }
             }
+        }
         return ResponseEntity.badRequest().build();
     }
 }
