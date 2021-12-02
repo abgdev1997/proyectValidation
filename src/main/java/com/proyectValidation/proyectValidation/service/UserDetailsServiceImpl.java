@@ -50,7 +50,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getUserName(),user.getPassword(),getAuthority(user));
     }
 
-    public Set<SimpleGrantedAuthority> getAuthority(User user) {
+    private Set<SimpleGrantedAuthority> getAuthority(User user) {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         if (user.getRole() == RolDto.USER) {
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
