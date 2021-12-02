@@ -8,7 +8,8 @@ import com.proyectValidation.proyectValidation.repository.UserRepository;
 import com.proyectValidation.proyectValidation.dto.LoginUser;
 import com.proyectValidation.proyectValidation.security.payload.JwtResponse;
 import com.proyectValidation.proyectValidation.service.AuthenticationService;
-import com.proyectValidation.proyectValidation.service.UserDetailsServiceImpl;
+import com.proyectValidation.proyectValidation.security.securityService.UserDetailsServiceImpl;
+import com.proyectValidation.proyectValidation.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class AuthController {
     @Autowired
     private AuthenticationService authenticationService;
     @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    private UserService userService;
 
     @PostMapping("/register")
     @ResponseBody
@@ -44,7 +45,7 @@ public class AuthController {
                     .body(new MessageDto("ERROR: The email exists"));
         }
 
-        userDetailsService.saveUser(signUpRequest);
+        userService.saveUser(signUpRequest);
 
         return ResponseEntity.ok(new MessageDto("User registered successfully"));
 
