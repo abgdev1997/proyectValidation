@@ -3,13 +3,13 @@ package com.proyectValidation.proyectValidation.controller;
 import com.proyectValidation.proyectValidation.dto.MessageDto;
 import com.proyectValidation.proyectValidation.models.User;
 import com.proyectValidation.proyectValidation.repository.UserRepository;
-import com.proyectValidation.proyectValidation.service.UserDetailsServiceImpl;
+import com.proyectValidation.proyectValidation.security.securityService.UserDetailsServiceImpl;
+import com.proyectValidation.proyectValidation.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +21,7 @@ public class AdministrationController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private UserService userService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/unverifiedUsers")
@@ -62,7 +62,7 @@ public class AdministrationController {
         if(!userRepository.existsById(id)){
             return ResponseEntity.notFound().build();
         }
-        userDetailsService.deleteUser(id);
+        userService.deleteUser(id);
         return ResponseEntity.ok().body(new MessageDto("Delete user!"));
     }
 }

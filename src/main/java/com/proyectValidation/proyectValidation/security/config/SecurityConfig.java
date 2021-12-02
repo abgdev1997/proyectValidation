@@ -5,7 +5,7 @@ import com.proyectValidation.proyectValidation.security.jwt.JwtAuthEntryPoint;
 import com.proyectValidation.proyectValidation.security.jwt.JwtRequestFilter;
 import com.proyectValidation.proyectValidation.security.payload.CustomAccessDeniedHandler;
 import com.proyectValidation.proyectValidation.security.payload.UnauthorizedEntryPoint;
-import com.proyectValidation.proyectValidation.service.UserDetailsServiceImpl;
+import com.proyectValidation.proyectValidation.security.securityService.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
