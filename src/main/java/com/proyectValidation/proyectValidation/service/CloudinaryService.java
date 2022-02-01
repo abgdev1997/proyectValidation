@@ -18,19 +18,31 @@ public class CloudinaryService {
 
     private Map<String, String> valuesMap = new HashMap<>();
 
-    @Value("${app.cloudinary.cloud-name}")
-    private String cloudName;
+    @Value("${app.cloudinary.cloud_name}")
+    private String cloud_name;
 
-    @Value("${app.cloudinary.apikey}")
-    private String apiKey;
+    @Value("${app.cloudinary.api_key}")
+    private String api_key;
 
-    @Value("${app.cloudinary.api-secret}")
-    private String apiSecret;
+    @Value("${app.cloudinary.api_secret}")
+    private String api_secret;
+
+    public String getCloud_name() {
+        return cloud_name;
+    }
+
+    public String getApi_key() {
+        return api_key;
+    }
+
+    public String getApi_secret() {
+        return api_secret;
+    }
 
     public CloudinaryService(){
-        valuesMap.put("cloud_name", cloudName);
-        valuesMap.put("api_key", apiKey);
-        valuesMap.put("api_secret", apiSecret);
+        valuesMap.put("cloud_name", getCloud_name());
+        valuesMap.put("api_key", getApi_key());
+        valuesMap.put("api_secret", getApi_secret());
         cloudinary = new Cloudinary(valuesMap);
     }
 
